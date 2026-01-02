@@ -161,5 +161,7 @@ Key Conventions
 - Balance the use of Tailwind utility classes with Stylus modules:
   - Use Tailwind for rapid development and consistent spacing/sizing.
   - Use Stylus modules for complex, unique component styles.
+- NPM
+  - Do not add package versions to package.json manually
 
 Follow Next.js docs for Data Fetching, Rendering, and Routing.

@@ -113,7 +113,21 @@ const config: Config = {
       ...defaultTheme.screens,
     },
     extend: {
+      // Design system tokens
+      borderRadius: theme.radius,
+      boxShadow: theme.shadows,
+      zIndex: theme.zIndex,
+      // Typography from design system
       fontSize: {
+        xs: [theme.typography.size.xs, theme.typography.lineHeight.normal],
+        sm: [theme.typography.size.sm, theme.typography.lineHeight.normal],
+        base: [theme.typography.size.md, theme.typography.lineHeight.normal],
+        lg: [theme.typography.size.lg, theme.typography.lineHeight.normal],
+        xl: [theme.typography.size.xl, theme.typography.lineHeight.normal],
+        "2xl": [theme.typography.size.xxl, theme.typography.lineHeight.tight],
+        "3xl": [theme.typography.size["3xl"], theme.typography.lineHeight.tight],
+        "4xl": [theme.typography.size["4xl"], theme.typography.lineHeight.tight],
+        // Legacy Nextmerce font sizes (for backward compatibility)
         "2xs": ["10px", "17px"],
         "heading-1": ["60px", "72px"],
         "heading-2": ["48px", "64px"],
@@ -131,7 +145,13 @@ const config: Config = {
         "custom-2": ["32px", "38px"],
         "custom-3": ["35px", "45px"],
       },
+      fontWeight: theme.typography.weight,
       spacing: {
+        // Design system spacing tokens
+        ...Object.fromEntries(
+          Object.entries(theme.spacing).map(([key, value]) => [key, value])
+        ),
+        // Legacy Nextmerce spacing (for backward compatibility)
         4.5: "1.125rem",
         5.5: "1.375rem",
         6.5: "1.625rem",
@@ -231,14 +251,8 @@ const config: Config = {
         40: "10rem",
         50: "12.5rem",
       },
-      zIndex: {
-        999999: "999999",
-        99999: "99999",
-        9999: "9999",
-        999: "999",
-        99: "99",
-        1: "1",
-      },
+      // Legacy z-index values (for backward compatibility)
+      // Design system z-index is already in extend.zIndex above
       boxShadow: {
         1: "0px 1px 2px 0px rgba(166, 175, 195, 0.25)",
         2: "0px 6px 24px 0px rgba(235, 238, 251, 0.40), 0px 2px 4px 0px rgba(148, 163, 184, 0.05)",
