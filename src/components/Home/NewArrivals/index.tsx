@@ -3,8 +3,27 @@ import Image from "next/image";
 import Link from "next/link";
 import ProductItem from "@/components/Common/ProductItem";
 import shopData from "@/components/Shop/shopData";
+import type { Product } from "@/services/api";
 
-const NewArrival = () => {
+interface NewArrivalProps {
+  products?: Product[];
+}
+
+const NewArrival = ({ products }: NewArrivalProps) => {
+  // Use server-fetched products if available, otherwise fall back to static data
+  const productsToShow = products && products.length > 0
+    ? products.map((product) => ({
+        title: product.title,
+        id: product.id,
+        price: product.price,
+        discountedPrice: product.price,
+        reviews: 0,
+        imgs: {
+          thumbnails: product.imageUrls.slice(0, 1),
+          previews: product.imageUrls,
+        },
+      }))
+    : shopData;
   return (
     <section className="overflow-hidden pt-15">
       <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
@@ -39,7 +58,7 @@ const NewArrival = () => {
           </div>
 
           <Link
-            href="/shop-with-sidebar"
+            href="/products"
             className="inline-flex font-medium text-custom-sm py-2.5 px-7 rounded-md border-gray-3 border bg-gray-1 text-dark ease-out duration-200 hover:bg-dark hover:text-white hover:border-transparent"
           >
             View All
@@ -48,7 +67,7 @@ const NewArrival = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-7.5 gap-y-9">
           {/* <!-- New Arrivals item --> */}
-          {shopData.map((item, key) => (
+          {productsToShow.slice(0, 8).map((item, key) => (
             <ProductItem item={item} key={key} />
           ))}
         </div>

@@ -19,13 +19,17 @@ export const revalidate = 60;
 
 export default async function HomePage() {
   // Fetch data on the server for SEO
-  // Note: Home component will need to be updated to accept these props
-  // For now, data is fetched on server but not yet passed to component
-  await Promise.all([
+  const [featuredProducts, newArrivals, categories] = await Promise.all([
     getFeaturedProducts(8),
     getNewArrivals(8),
     getCategories(),
   ]);
 
-  return <Home />;
+  return (
+    <Home
+      featuredProducts={featuredProducts}
+      newArrivals={newArrivals}
+      categories={categories}
+    />
+  );
 }

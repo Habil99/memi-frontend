@@ -3,13 +3,26 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { useCallback, useRef, useEffect } from "react";
 import data from "./categoryData";
 import Image from "next/image";
+import type { Category } from "@/services/api";
 
 // Import Swiper styles
 import "swiper/css/navigation";
 import "swiper/css";
 import SingleItem from "./SingleItem";
 
-const Categories = () => {
+interface CategoriesProps {
+  categories?: Category[];
+}
+
+const Categories = ({ categories }: CategoriesProps) => {
+  // Use server-fetched categories if available, otherwise fall back to static data
+  const categoriesToShow = categories && categories.length > 0
+    ? categories.map((cat) => ({
+        title: cat.name,
+        id: cat.id,
+        img: `/images/categories/categories-01.png`, // Default image, can be updated when API provides images
+      }))
+    : data;
   const sliderRef = useRef(null);
 
   const handlePrev = useCallback(() => {
@@ -134,7 +147,7 @@ const Categories = () => {
               },
             }}
           >
-            {data.map((item, key) => (
+            {categoriesToShow.map((item, key) => (
               <SwiperSlide key={key}>
                 <SingleItem item={item} />
               </SwiperSlide>
