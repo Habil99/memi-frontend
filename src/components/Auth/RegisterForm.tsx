@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { authService } from "@/services/auth";
+import { registerAction } from "@/app/actions/auth";
 import toast from "react-hot-toast";
 
 const registerSchema = z.object({
@@ -41,10 +41,14 @@ export default function RegisterForm() {
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     try {
-      await authService.register(data);
-      toast.success("Registration successful!");
-      router.push("/");
-      router.refresh();
+      const result = await registerAction(data);
+      if (result.success) {
+        toast.success("Registration successful!");
+        router.push("/");
+        router.refresh();
+      } else {
+        toast.error(result.error || "Registration failed. Please try again.");
+      }
     } catch (error: any) {
       toast.error(error.message || "Registration failed. Please try again.");
     } finally {

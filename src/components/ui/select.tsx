@@ -80,6 +80,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             aria-describedby={
               error ? `${selectId}-error` : helperText ? `${selectId}-helper` : undefined
             }
+            value={props.value || ''}
             {...props}
           >
             {options.map((option) => (
