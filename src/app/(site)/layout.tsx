@@ -8,6 +8,7 @@ import Footer from "../../components/Footer";
 import { ModalProvider } from "../context/QuickViewModalContext";
 import { CartModalProvider } from "../context/CartSidebarModalContext";
 import { ReduxProvider } from "@/redux/provider";
+import { QueryProvider } from "@/providers/query-provider";
 import QuickViewModal from "@/components/Common/QuickViewModal";
 import CartSidebarModal from "@/components/Common/CartSidebarModal";
 import { PreviewSliderProvider } from "../context/PreviewSliderContext";
@@ -34,20 +35,22 @@ export default function RootLayout({
           <PreLoader />
         ) : (
           <>
-            <ReduxProvider>
-              <CartModalProvider>
-                <ModalProvider>
-                  <PreviewSliderProvider>
-                    <Header />
-                    {children}
+            <QueryProvider>
+              <ReduxProvider>
+                <CartModalProvider>
+                  <ModalProvider>
+                    <PreviewSliderProvider>
+                      <Header />
+                      {children}
 
-                    <QuickViewModal />
-                    <CartSidebarModal />
-                    <PreviewSliderModal />
-                  </PreviewSliderProvider>
-                </ModalProvider>
-              </CartModalProvider>
-            </ReduxProvider>
+                      <QuickViewModal />
+                      <CartSidebarModal />
+                      <PreviewSliderModal />
+                    </PreviewSliderProvider>
+                  </ModalProvider>
+                </CartModalProvider>
+              </ReduxProvider>
+            </QueryProvider>
             <ScrollToTop />
             <Footer />
           </>

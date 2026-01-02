@@ -116,7 +116,10 @@ class ApiClient {
     return this.handleResponse<T>(response)
   }
 
-  async upload(endpoint: string, formData: FormData): Promise<{ url: string }> {
+  async upload<T = { url: string } | { urls: string[] }>(
+    endpoint: string,
+    formData: FormData
+  ): Promise<T> {
     const headers: HeadersInit = {}
     
     const token = typeof window !== 'undefined' 
@@ -133,7 +136,7 @@ class ApiClient {
       body: formData,
     })
 
-    return this.handleResponse<{ url: string }>(response)
+    return this.handleResponse<T>(response)
   }
 }
 
