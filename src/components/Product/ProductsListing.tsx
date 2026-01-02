@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import Image from 'next/image'
 import Link from 'next/link'
+import ProductFilters from './ProductFilters'
 
 interface ProductsListingProps {
   products: ProductsResponse
@@ -25,9 +26,17 @@ export default function ProductsListing({
 }: ProductsListingProps) {
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-text-primary mb-8">
-        Browse Products
-      </h1>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Filters Sidebar */}
+        <div className="lg:col-span-1">
+          <ProductFilters categories={categories} />
+        </div>
+
+        {/* Products Grid */}
+        <div className="lg:col-span-3">
+          <h1 className="text-3xl font-bold text-text-primary mb-8">
+            Browse Products
+          </h1>
 
       {products.data.length === 0 ? (
         <div className="text-center py-12">
@@ -91,7 +100,8 @@ export default function ProductsListing({
             </div>
           )}
         </>
-      )}
+        </div>
+      </div>
     </div>
   )
 }
