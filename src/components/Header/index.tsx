@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import CustomSelect from "./CustomSelect";
 import { menuData } from "./menuData";
 import Dropdown from "./Dropdown";
@@ -8,13 +9,20 @@ import { useAppSelector } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { selectTotalPrice } from "@/redux/features/cart-slice";
 import { useCartModalContext } from "@/app/context/CartSidebarModalContext";
+import { useDebounce } from "@/hooks/use-debounce";
 import Image from "next/image";
+import { theme } from "@/design-system";
 
 const Header = () => {
+  const router = useRouter();
+  const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState("");
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
   const { openCartModal } = useCartModalContext();
+
+  // Debounce search query
+  const debouncedSearch = useDebounce(searchQuery, 500);
 
   const product = useAppSelector((state) => state.cartReducer.items);
   const totalPrice = useSelector(selectTotalPrice);
@@ -36,6 +44,26 @@ const Header = () => {
     window.addEventListener("scroll", handleStickyMenu);
   });
 
+  // Handle search submission - redirect to products page with search query
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push("/products");
+    }
+  };
+
+  // Auto-redirect to products page when debounced search changes (if on products page)
+  useEffect(() => {
+    if (pathname === "/products" && debouncedSearch.trim()) {
+      const params = new URLSearchParams(window.location.search);
+      params.set("search", debouncedSearch.trim());
+      params.delete("page"); // Reset to page 1
+      router.push(`/products?${params.toString()}`, { scroll: false });
+    }
+  }, [debouncedSearch, pathname, router]);
+
   const options = [
     { label: "All Categories", value: "0" },
     { label: "Desktop", value: "1" },
@@ -49,7 +77,7 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed left-0 top-0 w-full z-9999 bg-white transition-all ease-in-out duration-300 ${
+      className={`fixed left-0 top-0 w-full z-10 bg-white transition-all ease-in-out duration-300 ${
         stickyMenu && "shadow"
       }`}
     >
@@ -72,7 +100,7 @@ const Header = () => {
             </Link>
 
             <div className="max-w-[475px] w-full">
-              <form>
+              <form onSubmit={handleSearchSubmit}>
                 <div className="flex items-center">
                   <CustomSelect options={options} />
 

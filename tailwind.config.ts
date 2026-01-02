@@ -1,5 +1,5 @@
-import type { Config } from "tailwindcss";
 import { theme } from "./src/design-system";
+import type { Config } from "tailwindcss";
 
 const defaultTheme = require("tailwindcss/defaultTheme");
 
@@ -137,18 +137,58 @@ const config: Config = {
     extend: {
       // Design system tokens
       borderRadius: theme.radius,
-      boxShadow: theme.shadows,
-      zIndex: theme.zIndex,
+      zIndex: Object.fromEntries(
+        Object.entries(theme.zIndex).map(([key, value]) => [key, String(value)])
+      ),
+      boxShadow: {
+        ...theme.shadows,
+        // Legacy Nextmerce shadows (for backward compatibility)
+        1: "0px 1px 2px 0px rgba(166, 175, 195, 0.25)",
+        2: "0px 6px 24px 0px rgba(235, 238, 251, 0.40), 0px 2px 4px 0px rgba(148, 163, 184, 0.05)",
+        3: "0px 2px 16px 0px rgba(13, 10, 44, 0.12)",
+        testimonial:
+          "0px 0px 4px 0px rgba(148, 163, 184, 0.10), 0px 6px 12px 0px rgba(224, 227, 238, 0.45)",
+        breadcrumb: "0px 1px 0px 0px #E5E7EB, 0px -1px 0px 0px #E5E7EB",
+        range:
+          "0px 0px 1px 0px rgba(33, 37, 41, 0.08), 0px 2px 2px 0px rgba(33, 37, 41, 0.06)",
+        filter: "0px 1px 0px 0px #E5E7EB",
+        list: "1px 0px 0px 0px #E5E7EB",
+        input: "inset 0 0 0 2px #3C50E0",
+      },
       // Typography from design system
       fontSize: {
-        xs: [theme.typography.size.xs, theme.typography.lineHeight.normal],
-        sm: [theme.typography.size.sm, theme.typography.lineHeight.normal],
-        base: [theme.typography.size.md, theme.typography.lineHeight.normal],
-        lg: [theme.typography.size.lg, theme.typography.lineHeight.normal],
-        xl: [theme.typography.size.xl, theme.typography.lineHeight.normal],
-        "2xl": [theme.typography.size.xxl, theme.typography.lineHeight.tight],
-        "3xl": [theme.typography.size["3xl"], theme.typography.lineHeight.tight],
-        "4xl": [theme.typography.size["4xl"], theme.typography.lineHeight.tight],
+        xs: [
+          theme.typography.size.xs,
+          String(theme.typography.lineHeight.normal),
+        ],
+        sm: [
+          theme.typography.size.sm,
+          String(theme.typography.lineHeight.normal),
+        ],
+        base: [
+          theme.typography.size.md,
+          String(theme.typography.lineHeight.normal),
+        ],
+        lg: [
+          theme.typography.size.lg,
+          String(theme.typography.lineHeight.normal),
+        ],
+        xl: [
+          theme.typography.size.xl,
+          String(theme.typography.lineHeight.normal),
+        ],
+        "2xl": [
+          theme.typography.size.xxl,
+          String(theme.typography.lineHeight.tight),
+        ],
+        "3xl": [
+          theme.typography.size["3xl"],
+          String(theme.typography.lineHeight.tight),
+        ],
+        "4xl": [
+          theme.typography.size["4xl"],
+          String(theme.typography.lineHeight.tight),
+        ],
         // Legacy Nextmerce font sizes (for backward compatibility)
         "2xs": ["10px", "17px"],
         "heading-1": ["60px", "72px"],
@@ -167,7 +207,12 @@ const config: Config = {
         "custom-2": ["32px", "38px"],
         "custom-3": ["35px", "45px"],
       },
-      fontWeight: theme.typography.weight,
+      fontWeight: Object.fromEntries(
+        Object.entries(theme.typography.weight).map(([key, value]) => [
+          key,
+          String(value),
+        ])
+      ),
       spacing: {
         // Design system spacing tokens
         ...Object.fromEntries(
@@ -273,21 +318,9 @@ const config: Config = {
         40: "10rem",
         50: "12.5rem",
       },
+      // Legacy shadow values (merged with design system shadows above)
       // Legacy z-index values (for backward compatibility)
       // Design system z-index is already in extend.zIndex above
-      boxShadow: {
-        1: "0px 1px 2px 0px rgba(166, 175, 195, 0.25)",
-        2: "0px 6px 24px 0px rgba(235, 238, 251, 0.40), 0px 2px 4px 0px rgba(148, 163, 184, 0.05)",
-        3: "0px 2px 16px 0px rgba(13, 10, 44, 0.12)",
-        testimonial:
-          "0px 0px 4px 0px rgba(148, 163, 184, 0.10), 0px 6px 12px 0px rgba(224, 227, 238, 0.45)",
-        breadcrumb: "0px 1px 0px 0px #E5E7EB, 0px -1px 0px 0px #E5E7EB",
-        range:
-          "0px 0px 1px 0px rgba(33, 37, 41, 0.08), 0px 2px 2px 0px rgba(33, 37, 41, 0.06)",
-        filter: "0px 1px 0px 0px #E5E7EB",
-        list: "1px 0px 0px 0px #E5E7EB",
-        input: "inset 0 0 0 2px #3C50E0",
-      },
     },
   },
   plugins: [],

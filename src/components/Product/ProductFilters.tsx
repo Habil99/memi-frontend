@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Controller, useForm } from 'react-hook-form'
+import { useDebouncedSearch } from '@/hooks/use-debounced-search'
 import type { Category } from '@/services/api'
 
 interface ProductFiltersProps {
@@ -32,9 +33,19 @@ export default function ProductFilters({ categories }: ProductFiltersProps) {
   const searchParams = useSearchParams()
   const [isOpen, setIsOpen] = useState(false)
 
-  const { register, handleSubmit, control, reset } = useForm<FilterFormData>({
+  // Debounced search hook - updates URL automatically
+  const {
+    searchValue,
+    handleChange: handleSearchChange,
+    handleClear: handleSearchClear,
+    isSearching,
+  } = useDebouncedSearch({
+    paramName: 'search',
+    debounceDelay: 500,
+  })
+
+  const { handleSubmit, control, reset, register } = useForm<FilterFormData>({
     defaultValues: {
-      search: searchParams.get('search') || '',
       categoryId: searchParams.get('categoryId') || '',
       condition: searchParams.get('condition') || '',
       minPrice: searchParams.get('minPrice') ? parseFloat(searchParams.get('minPrice')!) : undefined,
@@ -43,19 +54,34 @@ export default function ProductFilters({ categories }: ProductFiltersProps) {
   })
 
   const onSubmit = (data: FilterFormData) => {
-    const params = new URLSearchParams()
+    const params = new URLSearchParams(searchParams.toString())
     
-    if (data.search) params.set('search', data.search)
+    // Preserve search from debounced hook
+    if (searchValue) params.set('search', searchValue)
+    else params.delete('search')
+    
+    // Update other filters
     if (data.categoryId) params.set('categoryId', data.categoryId)
+    else params.delete('categoryId')
+    
     if (data.condition) params.set('condition', data.condition)
+    else params.delete('condition')
+    
     if (data.minPrice) params.set('minPrice', data.minPrice.toString())
+    else params.delete('minPrice')
+    
     if (data.maxPrice) params.set('maxPrice', data.maxPrice.toString())
+    else params.delete('maxPrice')
+    
+    // Reset to page 1 when filters change
+    params.delete('page')
 
     router.push(`/products?${params.toString()}`)
   }
 
   const handleClear = () => {
     reset()
+    handleSearchClear()
     router.push('/products')
   }
 
@@ -94,12 +120,20 @@ export default function ProductFilters({ categories }: ProductFiltersProps) {
       {isOpen && (
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Input
-              label="Search"
-              placeholder="Search products..."
-              {...register('search')}
-              fullWidth
-            />
+            <div>
+              <Input
+                label="Search"
+                placeholder="Search products..."
+                value={searchValue}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                fullWidth
+              />
+              {isSearching && (
+                <p className="text-xs text-text-muted mt-1">
+                  Searching...
+                </p>
+              )}
+            </div>
 
             <Controller
               name="categoryId"
