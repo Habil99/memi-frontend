@@ -1,0 +1,4134 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "summary": "Register a new user",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "user": {
+                      "id": "123e4567-e89b-12d3-a456-426614174000",
+                      "email": "user@example.com",
+                      "name": "John Doe",
+                      "role": "USER"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": { "description": "User already exists" }
+        },
+        "tags": ["auth"]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "summary": "Login user",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    "user": {
+                      "id": "123e4567-e89b-12d3-a456-426614174000",
+                      "email": "user@example.com",
+                      "name": "John Doe",
+                      "role": "USER"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid credentials" }
+        },
+        "tags": ["auth"]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "summary": "Refresh access token",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RefreshTokenDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token successfully refreshed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Invalid refresh token" }
+        },
+        "tags": ["auth"]
+      }
+    },
+    "/api/v1/auth/test": {
+      "post": {
+        "operationId": "AuthController_test",
+        "summary": "Test endpoint - requires authentication",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authentication successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Authentication successful" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["auth"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/admin/analytics/overview": {
+      "get": {
+        "operationId": "AdminAnalyticsController_getOverview",
+        "summary": "Get platform overview analytics (Admin only)",
+        "parameters": [
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Start date for filtering (ISO date string)",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "End date for filtering (ISO date string)",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "name": "groupBy",
+            "required": false,
+            "in": "query",
+            "description": "Group results by time period",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "eventType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by event type",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "entityType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity type",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "name": "entityId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Start date for filtering (ISO date string)",
+            "required": false,
+            "name": "startDate",
+            "in": "query",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "description": "End date for filtering (ISO date string)",
+            "required": false,
+            "name": "endDate",
+            "in": "query",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "description": "Group results by time period",
+            "required": false,
+            "name": "groupBy",
+            "in": "query",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Page number",
+            "required": false,
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Items per page",
+            "required": false,
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by event type",
+            "required": false,
+            "name": "eventType",
+            "in": "query",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by entity type",
+            "required": false,
+            "name": "entityType",
+            "in": "query",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "description": "Filter by entity ID",
+            "required": false,
+            "name": "entityId",
+            "in": "query",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Overview analytics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "totalUsers": 1000,
+                    "totalProducts": 5000,
+                    "totalChats": 2000,
+                    "totalReservations": 500
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["admin-analytics"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/admin/analytics/users": {
+      "get": {
+        "operationId": "AdminAnalyticsController_getUserAnalytics",
+        "summary": "Get user analytics (Admin only)",
+        "parameters": [
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Start date for filtering (ISO date string)",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "End date for filtering (ISO date string)",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "name": "groupBy",
+            "required": false,
+            "in": "query",
+            "description": "Group results by time period",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "eventType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by event type",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "entityType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity type",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "name": "entityId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Start date for filtering (ISO date string)",
+            "required": false,
+            "name": "startDate",
+            "in": "query",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "description": "End date for filtering (ISO date string)",
+            "required": false,
+            "name": "endDate",
+            "in": "query",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "description": "Group results by time period",
+            "required": false,
+            "name": "groupBy",
+            "in": "query",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Page number",
+            "required": false,
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Items per page",
+            "required": false,
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by event type",
+            "required": false,
+            "name": "eventType",
+            "in": "query",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by entity type",
+            "required": false,
+            "name": "entityType",
+            "in": "query",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "description": "Filter by entity ID",
+            "required": false,
+            "name": "entityId",
+            "in": "query",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User analytics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "totalUsers": 1000,
+                    "newUsers": 50,
+                    "activeUsers": 800
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["admin-analytics"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/admin/analytics/products": {
+      "get": {
+        "operationId": "AdminAnalyticsController_getProductAnalytics",
+        "summary": "Get product analytics (Admin only)",
+        "parameters": [
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Start date for filtering (ISO date string)",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "End date for filtering (ISO date string)",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "name": "groupBy",
+            "required": false,
+            "in": "query",
+            "description": "Group results by time period",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "eventType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by event type",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "entityType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity type",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "name": "entityId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Start date for filtering (ISO date string)",
+            "required": false,
+            "name": "startDate",
+            "in": "query",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "description": "End date for filtering (ISO date string)",
+            "required": false,
+            "name": "endDate",
+            "in": "query",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "description": "Group results by time period",
+            "required": false,
+            "name": "groupBy",
+            "in": "query",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Page number",
+            "required": false,
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Items per page",
+            "required": false,
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by event type",
+            "required": false,
+            "name": "eventType",
+            "in": "query",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by entity type",
+            "required": false,
+            "name": "entityType",
+            "in": "query",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "description": "Filter by entity ID",
+            "required": false,
+            "name": "entityId",
+            "in": "query",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product analytics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "totalProducts": 5000,
+                    "activeProducts": 4500,
+                    "soldProducts": 500
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["admin-analytics"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/admin/analytics/chats": {
+      "get": {
+        "operationId": "AdminAnalyticsController_getChatAnalytics",
+        "summary": "Get chat analytics (Admin only)",
+        "parameters": [
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Start date for filtering (ISO date string)",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "End date for filtering (ISO date string)",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "name": "groupBy",
+            "required": false,
+            "in": "query",
+            "description": "Group results by time period",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "eventType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by event type",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "entityType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity type",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "name": "entityId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Start date for filtering (ISO date string)",
+            "required": false,
+            "name": "startDate",
+            "in": "query",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "description": "End date for filtering (ISO date string)",
+            "required": false,
+            "name": "endDate",
+            "in": "query",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "description": "Group results by time period",
+            "required": false,
+            "name": "groupBy",
+            "in": "query",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Page number",
+            "required": false,
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Items per page",
+            "required": false,
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by event type",
+            "required": false,
+            "name": "eventType",
+            "in": "query",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by entity type",
+            "required": false,
+            "name": "entityType",
+            "in": "query",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "description": "Filter by entity ID",
+            "required": false,
+            "name": "entityId",
+            "in": "query",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chat analytics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "totalChats": 2000,
+                    "activeChats": 500,
+                    "totalMessages": 10000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["admin-analytics"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/admin/analytics/engagement": {
+      "get": {
+        "operationId": "AdminAnalyticsController_getEngagementAnalytics",
+        "summary": "Get engagement analytics (Admin only)",
+        "parameters": [
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Start date for filtering (ISO date string)",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "End date for filtering (ISO date string)",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "name": "groupBy",
+            "required": false,
+            "in": "query",
+            "description": "Group results by time period",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "eventType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by event type",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "entityType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity type",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "name": "entityId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Start date for filtering (ISO date string)",
+            "required": false,
+            "name": "startDate",
+            "in": "query",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "description": "End date for filtering (ISO date string)",
+            "required": false,
+            "name": "endDate",
+            "in": "query",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "description": "Group results by time period",
+            "required": false,
+            "name": "groupBy",
+            "in": "query",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Page number",
+            "required": false,
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Items per page",
+            "required": false,
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by event type",
+            "required": false,
+            "name": "eventType",
+            "in": "query",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by entity type",
+            "required": false,
+            "name": "entityType",
+            "in": "query",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "description": "Filter by entity ID",
+            "required": false,
+            "name": "entityId",
+            "in": "query",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Engagement analytics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "dailyActiveUsers": 200,
+                    "averageSessionDuration": 15,
+                    "pageViews": 5000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["admin-analytics"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/admin/analytics/reports": {
+      "get": {
+        "operationId": "AdminAnalyticsController_getTrustSafetyAnalytics",
+        "summary": "Get trust & safety analytics (Admin only)",
+        "parameters": [
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Start date for filtering (ISO date string)",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "End date for filtering (ISO date string)",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "name": "groupBy",
+            "required": false,
+            "in": "query",
+            "description": "Group results by time period",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "eventType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by event type",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "entityType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity type",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "name": "entityId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Start date for filtering (ISO date string)",
+            "required": false,
+            "name": "startDate",
+            "in": "query",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "description": "End date for filtering (ISO date string)",
+            "required": false,
+            "name": "endDate",
+            "in": "query",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "description": "Group results by time period",
+            "required": false,
+            "name": "groupBy",
+            "in": "query",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Page number",
+            "required": false,
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Items per page",
+            "required": false,
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by event type",
+            "required": false,
+            "name": "eventType",
+            "in": "query",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by entity type",
+            "required": false,
+            "name": "entityType",
+            "in": "query",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "description": "Filter by entity ID",
+            "required": false,
+            "name": "entityId",
+            "in": "query",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trust & safety analytics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "totalReports": 100,
+                    "pendingReports": 20,
+                    "resolvedReports": 80
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["admin-analytics"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/admin/analytics/system": {
+      "get": {
+        "operationId": "AdminAnalyticsController_getSystemAnalytics",
+        "summary": "Get system & security analytics (Admin only)",
+        "parameters": [
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Start date for filtering (ISO date string)",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "End date for filtering (ISO date string)",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "name": "groupBy",
+            "required": false,
+            "in": "query",
+            "description": "Group results by time period",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "eventType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by event type",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "entityType",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity type",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "name": "entityId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by entity ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Start date for filtering (ISO date string)",
+            "required": false,
+            "name": "startDate",
+            "in": "query",
+            "schema": { "example": "2024-01-01", "type": "string" }
+          },
+          {
+            "description": "End date for filtering (ISO date string)",
+            "required": false,
+            "name": "endDate",
+            "in": "query",
+            "schema": { "example": "2024-12-31", "type": "string" }
+          },
+          {
+            "description": "Group results by time period",
+            "required": false,
+            "name": "groupBy",
+            "in": "query",
+            "schema": {
+              "example": "day",
+              "enum": ["day", "week", "month"],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Page number",
+            "required": false,
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Items per page",
+            "required": false,
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Filter by event type",
+            "required": false,
+            "name": "eventType",
+            "in": "query",
+            "schema": {
+              "example": "PRODUCT_VIEWED",
+              "enum": [
+                "USER_REGISTERED",
+                "USER_LOGGED_IN",
+                "USER_LOGGED_OUT",
+                "USER_PROFILE_UPDATED",
+                "USER_BLOCKED",
+                "USER_DELETED",
+                "PRODUCT_CREATED",
+                "PRODUCT_UPDATED",
+                "PRODUCT_DELETED",
+                "PRODUCT_VIEWED",
+                "PRODUCT_FAVORITED",
+                "PRODUCT_RESERVED",
+                "PRODUCT_SOLD",
+                "PRODUCT_REPORTED",
+                "CHAT_CREATED",
+                "MESSAGE_SENT",
+                "USER_BLOCKED_CHAT",
+                "CHAT_REPORTED",
+                "FAVORITE_ADDED",
+                "FAVORITE_REMOVED",
+                "SEARCH_PERFORMED",
+                "FILTER_APPLIED",
+                "USER_REPORTED",
+                "REPORT_RESOLVED",
+                "USER_BANNED",
+                "PRODUCT_REMOVED_BY_ADMIN",
+                "LOGIN_FAILED",
+                "RATE_LIMIT_TRIGGERED",
+                "FILE_UPLOAD_FAILED",
+                "UNAUTHORIZED_ACTION_ATTEMPT"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by entity type",
+            "required": false,
+            "name": "entityType",
+            "in": "query",
+            "schema": { "example": "product", "type": "string" }
+          },
+          {
+            "description": "Filter by entity ID",
+            "required": false,
+            "name": "entityId",
+            "in": "query",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "System analytics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "loginAttempts": 5000,
+                    "failedLogins": 100,
+                    "unauthorizedAttempts": 50
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["admin-analytics"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/admin/analytics/test": {
+      "get": {
+        "operationId": "AdminAnalyticsController_test",
+        "summary": "Test endpoint",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Test successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Admin Analytics module is working" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["admin-analytics"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/users/profile": {
+      "get": {
+        "operationId": "UsersController_getProfile",
+        "summary": "Get current user profile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "email": "user@example.com",
+                    "name": "John Doe",
+                    "role": "USER",
+                    "city": "Baku",
+                    "phone": "+994501234567"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["users"],
+        "security": [{ "bearer": [] }]
+      },
+      "put": {
+        "operationId": "UsersController_updateProfile",
+        "summary": "Update current user profile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateProfileDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "email": "user@example.com",
+                    "name": "John Doe Updated",
+                    "city": "Baku"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["users"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/users/{id}/public": {
+      "get": {
+        "operationId": "UsersController_getPublicProfile",
+        "summary": "Get public user profile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public profile retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "name": "John Doe",
+                    "city": "Baku"
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "User not found" }
+        },
+        "tags": ["users"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/users/test": {
+      "get": {
+        "operationId": "UsersController_test",
+        "summary": "Test endpoint",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Test successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Users module is working" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["users"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/users/admin/{id}/block": {
+      "put": {
+        "operationId": "UsersController_blockUser",
+        "summary": "Block a user (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID to block",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User blocked successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "isBlocked": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["users"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/users/admin/{id}/unblock": {
+      "put": {
+        "operationId": "UsersController_unblockUser",
+        "summary": "Unblock a user (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID to unblock",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User unblocked successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "isBlocked": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["users"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/categories": {
+      "get": {
+        "operationId": "CategoriesController_findAll",
+        "summary": "Get all categories",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Categories retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "123e4567-e89b-12d3-a456-426614174000",
+                      "name": "Clothing",
+                      "slug": "clothing",
+                      "description": "All types of clothing"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": ["categories"]
+      },
+      "post": {
+        "operationId": "CategoriesController_create",
+        "summary": "Create a new category (Admin only)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCategoryDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "name": "Clothing",
+                    "slug": "clothing"
+                  }
+                }
+              }
+            }
+          },
+          "409": { "description": "Category already exists" }
+        },
+        "tags": ["categories"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/categories/with-subcategories": {
+      "get": {
+        "operationId": "CategoriesController_findAllWithSubcategories",
+        "summary": "Get all categories with subcategories",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Categories with subcategories retrieved successfully"
+          }
+        },
+        "tags": ["categories"]
+      }
+    },
+    "/api/v1/categories/{id}": {
+      "get": {
+        "operationId": "CategoriesController_findById",
+        "summary": "Get category by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Category ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "name": "Clothing",
+                    "slug": "clothing"
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Category not found" }
+        },
+        "tags": ["categories"]
+      },
+      "put": {
+        "operationId": "CategoriesController_update",
+        "summary": "Update a category (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Category ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateCategoryDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Category updated successfully" },
+          "404": { "description": "Category not found" }
+        },
+        "tags": ["categories"],
+        "security": [{ "bearer": [] }]
+      },
+      "delete": {
+        "operationId": "CategoriesController_delete",
+        "summary": "Delete a category (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Category ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Category deleted successfully" }
+                }
+              }
+            }
+          },
+          "404": { "description": "Category not found" }
+        },
+        "tags": ["categories"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/categories/slug/{slug}": {
+      "get": {
+        "operationId": "CategoriesController_findBySlug",
+        "summary": "Get category by slug",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "description": "Category slug",
+            "schema": { "example": "clothing", "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Category retrieved successfully" },
+          "404": { "description": "Category not found" }
+        },
+        "tags": ["categories"]
+      }
+    },
+    "/api/v1/categories/subcategories": {
+      "post": {
+        "operationId": "CategoriesController_createSubcategory",
+        "summary": "Create a new subcategory (Admin only)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateSubcategoryDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Subcategory created successfully" },
+          "409": { "description": "Subcategory already exists" }
+        },
+        "tags": ["categories"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/categories/subcategories/{id}": {
+      "delete": {
+        "operationId": "CategoriesController_deleteSubcategory",
+        "summary": "Delete a subcategory (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Subcategory ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Subcategory deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Subcategory deleted successfully" }
+                }
+              }
+            }
+          },
+          "404": { "description": "Subcategory not found" }
+        },
+        "tags": ["categories"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/categories/test": {
+      "get": {
+        "operationId": "CategoriesController_test",
+        "summary": "Test endpoint",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Test successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Categories module is working" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["categories"]
+      }
+    },
+    "/api/v1/products": {
+      "get": {
+        "operationId": "ProductsController_findAll",
+        "summary": "Get all products with filters",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search query for title, description, or brand",
+            "schema": { "example": "jacket", "type": "string" }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by category ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          },
+          {
+            "name": "subcategoryId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by subcategory ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174001",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sellerId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by seller ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174002",
+              "type": "string"
+            }
+          },
+          {
+            "name": "condition",
+            "required": false,
+            "in": "query",
+            "description": "Filter by product condition",
+            "schema": {
+              "example": "EXCELLENT",
+              "enum": ["NEW", "LIKE_NEW", "EXCELLENT", "GOOD", "FAIR", "POOR"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by product status",
+            "schema": {
+              "example": "ACTIVE",
+              "enum": ["ACTIVE", "RESERVED", "SOLD", "DELETED"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "location",
+            "required": false,
+            "in": "query",
+            "description": "Filter by location",
+            "schema": { "example": "Baku", "type": "string" }
+          },
+          {
+            "name": "brand",
+            "required": false,
+            "in": "query",
+            "description": "Filter by brand",
+            "schema": { "example": "Zara", "type": "string" }
+          },
+          {
+            "name": "color",
+            "required": false,
+            "in": "query",
+            "description": "Filter by color",
+            "schema": { "example": "Brown", "type": "string" }
+          },
+          {
+            "name": "minPrice",
+            "required": false,
+            "in": "query",
+            "description": "Minimum price filter",
+            "schema": { "minimum": 0, "example": 50, "type": "number" }
+          },
+          {
+            "name": "maxPrice",
+            "required": false,
+            "in": "query",
+            "description": "Maximum price filter",
+            "schema": { "minimum": 0, "example": 500, "type": "number" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Search query for title, description, or brand",
+            "required": false,
+            "name": "search",
+            "in": "query",
+            "schema": { "example": "jacket", "type": "string" }
+          },
+          {
+            "description": "Filter by category ID",
+            "required": false,
+            "name": "categoryId",
+            "in": "query",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by subcategory ID",
+            "required": false,
+            "name": "subcategoryId",
+            "in": "query",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174001",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by seller ID",
+            "required": false,
+            "name": "sellerId",
+            "in": "query",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174002",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by product condition",
+            "required": false,
+            "name": "condition",
+            "in": "query",
+            "schema": {
+              "example": "EXCELLENT",
+              "enum": ["NEW", "LIKE_NEW", "EXCELLENT", "GOOD", "FAIR", "POOR"],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by product status",
+            "required": false,
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "example": "ACTIVE",
+              "enum": ["ACTIVE", "RESERVED", "SOLD", "DELETED"],
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter by location",
+            "required": false,
+            "name": "location",
+            "in": "query",
+            "schema": { "example": "Baku", "type": "string" }
+          },
+          {
+            "description": "Filter by brand",
+            "required": false,
+            "name": "brand",
+            "in": "query",
+            "schema": { "example": "Zara", "type": "string" }
+          },
+          {
+            "description": "Filter by color",
+            "required": false,
+            "name": "color",
+            "in": "query",
+            "schema": { "example": "Brown", "type": "string" }
+          },
+          {
+            "description": "Minimum price filter",
+            "required": false,
+            "name": "minPrice",
+            "in": "query",
+            "schema": { "minimum": 0, "example": 50, "type": "number" }
+          },
+          {
+            "description": "Maximum price filter",
+            "required": false,
+            "name": "maxPrice",
+            "in": "query",
+            "schema": { "minimum": 0, "example": 500, "type": "number" }
+          },
+          {
+            "description": "Page number",
+            "required": false,
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "description": "Items per page",
+            "required": false,
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "data": [
+                      {
+                        "id": "123e4567-e89b-12d3-a456-426614174000",
+                        "title": "Vintage Leather Jacket",
+                        "description": "Beautiful vintage leather jacket",
+                        "price": 150.5,
+                        "condition": "EXCELLENT",
+                        "status": "ACTIVE",
+                        "sellerId": "123e4567-e89b-12d3-a456-426614174001"
+                      }
+                    ],
+                    "total": 100,
+                    "page": 1,
+                    "limit": 20,
+                    "totalPages": 5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["products"]
+      },
+      "post": {
+        "operationId": "ProductsController_create",
+        "summary": "Create a new product",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateProductDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "title": "Vintage Leather Jacket",
+                    "description": "Beautiful vintage leather jacket",
+                    "price": 150.5,
+                    "condition": "EXCELLENT",
+                    "status": "ACTIVE"
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid input" }
+        },
+        "tags": ["products"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/products/{id}": {
+      "get": {
+        "operationId": "ProductsController_findById",
+        "summary": "Get product by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "title": "Vintage Leather Jacket",
+                    "description": "Beautiful vintage leather jacket",
+                    "price": 150.5,
+                    "condition": "EXCELLENT",
+                    "status": "ACTIVE",
+                    "sellerId": "123e4567-e89b-12d3-a456-426614174001",
+                    "images": [],
+                    "category": { "id": "...", "name": "Clothing" }
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Product not found" }
+        },
+        "tags": ["products"]
+      },
+      "put": {
+        "operationId": "ProductsController_update",
+        "summary": "Update a product",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateProductDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "title": "Updated Product Title",
+                    "price": 200
+                  }
+                }
+              }
+            }
+          },
+          "403": { "description": "Forbidden - not the owner" },
+          "404": { "description": "Product not found" }
+        },
+        "tags": ["products"],
+        "security": [{ "bearer": [] }]
+      },
+      "delete": {
+        "operationId": "ProductsController_delete",
+        "summary": "Delete a product (soft delete)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Product deleted successfully" }
+                }
+              }
+            }
+          },
+          "403": { "description": "Forbidden - not the owner" },
+          "404": { "description": "Product not found" }
+        },
+        "tags": ["products"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/products/test": {
+      "get": {
+        "operationId": "ProductsController_test",
+        "summary": "Test endpoint",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Test successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Products module is working" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["products"]
+      }
+    },
+    "/api/v1/favorites": {
+      "get": {
+        "operationId": "FavoritesController_getUserFavorites",
+        "summary": "Get user favorites",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Favorites retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "123e4567-e89b-12d3-a456-426614174000",
+                      "title": "Vintage Leather Jacket",
+                      "price": 150.5
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": ["favorites"],
+        "security": [{ "bearer": [] }]
+      },
+      "post": {
+        "operationId": "FavoritesController_addFavorite",
+        "summary": "Add product to favorites",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AddFavoriteDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product added to favorites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Product added to favorites" }
+                }
+              }
+            }
+          },
+          "404": { "description": "Product not found" },
+          "409": { "description": "Product already in favorites" }
+        },
+        "tags": ["favorites"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/favorites/{productId}": {
+      "delete": {
+        "operationId": "FavoritesController_removeFavorite",
+        "summary": "Remove product from favorites",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product removed from favorites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Product removed from favorites" }
+                }
+              }
+            }
+          },
+          "404": { "description": "Favorite not found" }
+        },
+        "tags": ["favorites"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/favorites/count/{productId}": {
+      "get": {
+        "operationId": "FavoritesController_getFavoriteCount",
+        "summary": "Get favorite count for a product",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Favorite count retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "productId": "123e4567-e89b-12d3-a456-426614174000",
+                    "count": 5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["favorites"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/favorites/test": {
+      "get": {
+        "operationId": "FavoritesController_test",
+        "summary": "Test endpoint",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Test successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Favorites module is working" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["favorites"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/upload/single": {
+      "post": {
+        "operationId": "UploadController_uploadSingle",
+        "summary": "Upload a single image file",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "File uploaded successfully" },
+          "400": { "description": "Invalid file" }
+        },
+        "tags": ["upload"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/upload/multiple": {
+      "post": {
+        "operationId": "UploadController_uploadMultiple",
+        "summary": "Upload multiple image files (max 8)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": { "type": "string", "format": "binary" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Files uploaded successfully" },
+          "400": { "description": "Invalid files" }
+        },
+        "tags": ["upload"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/upload/test": {
+      "post": {
+        "operationId": "UploadController_test",
+        "summary": "Test endpoint",
+        "parameters": [],
+        "responses": { "200": { "description": "Test successful" } },
+        "tags": ["upload"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/reservations": {
+      "post": {
+        "operationId": "ReservationsController_create",
+        "summary": "Create a new reservation",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateReservationDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reservation created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "productId": "123e4567-e89b-12d3-a456-426614174001",
+                    "buyerId": "123e4567-e89b-12d3-a456-426614174002",
+                    "status": "PENDING"
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid request" }
+        },
+        "tags": ["reservations"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/reservations/my": {
+      "get": {
+        "operationId": "ReservationsController_getMyReservations",
+        "summary": "Get current user reservations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Reservations retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "123e4567-e89b-12d3-a456-426614174000",
+                      "productId": "123e4567-e89b-12d3-a456-426614174001",
+                      "status": "PENDING"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": ["reservations"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/reservations/my-sales": {
+      "get": {
+        "operationId": "ReservationsController_getMySales",
+        "summary": "Get reservations for current user products",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Reservations retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "123e4567-e89b-12d3-a456-426614174000",
+                      "productId": "123e4567-e89b-12d3-a456-426614174001",
+                      "status": "PENDING"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": ["reservations"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/reservations/product/{productId}": {
+      "get": {
+        "operationId": "ReservationsController_getByProductId",
+        "summary": "Get reservations for a product",
+        "parameters": [
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reservations retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "123e4567-e89b-12d3-a456-426614174001",
+                      "productId": "123e4567-e89b-12d3-a456-426614174000",
+                      "status": "PENDING"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": ["reservations"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/reservations/{id}": {
+      "get": {
+        "operationId": "ReservationsController_findById",
+        "summary": "Get reservation by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Reservation ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reservation retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "productId": "123e4567-e89b-12d3-a456-426614174001",
+                    "buyerId": "123e4567-e89b-12d3-a456-426614174002",
+                    "status": "PENDING"
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Reservation not found" }
+        },
+        "tags": ["reservations"],
+        "security": [{ "bearer": [] }]
+      },
+      "put": {
+        "operationId": "ReservationsController_update",
+        "summary": "Update reservation status",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Reservation ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateReservationDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reservation updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "status": "CONFIRMED"
+                  }
+                }
+              }
+            }
+          },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Reservation not found" }
+        },
+        "tags": ["reservations"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/reservations/test": {
+      "get": {
+        "operationId": "ReservationsController_test",
+        "summary": "Test endpoint",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Test successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Reservations module is working" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["reservations"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/reports": {
+      "post": {
+        "operationId": "ReportsController_create",
+        "summary": "Create a new report",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateReportDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Report created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "type": "SPAM",
+                    "reason": "This product contains inappropriate content",
+                    "status": "PENDING"
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid request" }
+        },
+        "tags": ["reports"],
+        "security": [{ "bearer": [] }]
+      },
+      "get": {
+        "operationId": "ReportsController_findAll",
+        "summary": "Get all reports (Admin only)",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by report status",
+            "schema": { "example": "PENDING", "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reports retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "123e4567-e89b-12d3-a456-426614174000",
+                      "type": "SPAM",
+                      "status": "PENDING"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": ["reports"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/reports/{id}": {
+      "get": {
+        "operationId": "ReportsController_findById",
+        "summary": "Get report by ID (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Report ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "type": "SPAM",
+                    "reason": "Inappropriate content",
+                    "status": "PENDING"
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Report not found" }
+        },
+        "tags": ["reports"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/reports/{id}/status": {
+      "put": {
+        "operationId": "ReportsController_updateStatus",
+        "summary": "Update report status (Admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Report ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "example": "RESOLVED",
+                    "description": "New report status"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Report status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "status": "RESOLVED"
+                  }
+                }
+              }
+            }
+          },
+          "403": { "description": "Forbidden" }
+        },
+        "tags": ["reports"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/reports/test": {
+      "get": {
+        "operationId": "ReportsController_test",
+        "summary": "Test endpoint",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Test successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Reports module is working" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["reports"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/notifications": {
+      "get": {
+        "operationId": "NotificationsController_getNotifications",
+        "summary": "Get user notifications",
+        "parameters": [
+          {
+            "name": "isRead",
+            "required": false,
+            "in": "query",
+            "description": "Filter by read status",
+            "schema": { "example": "false", "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notifications retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "123e4567-e89b-12d3-a456-426614174000",
+                      "type": "RESERVATION_CREATED",
+                      "message": "New reservation for your product",
+                      "isRead": false
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": ["notifications"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/notifications/unread-count": {
+      "get": {
+        "operationId": "NotificationsController_getUnreadCount",
+        "summary": "Get unread notification count",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Unread count retrieved successfully",
+            "content": {
+              "application/json": { "schema": { "example": { "count": 5 } } }
+            }
+          }
+        },
+        "tags": ["notifications"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/notifications/{id}/read": {
+      "put": {
+        "operationId": "NotificationsController_markAsRead",
+        "summary": "Mark notification as read",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Notification ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification marked as read",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "isRead": true
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Notification not found" }
+        },
+        "tags": ["notifications"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/notifications/read-all": {
+      "put": {
+        "operationId": "NotificationsController_markAllAsRead",
+        "summary": "Mark all notifications as read",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "All notifications marked as read",
+            "content": {
+              "application/json": { "schema": { "example": { "count": 5 } } }
+            }
+          }
+        },
+        "tags": ["notifications"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/notifications/{id}": {
+      "delete": {
+        "operationId": "NotificationsController_delete",
+        "summary": "Delete a notification",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Notification ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Notification deleted successfully" }
+                }
+              }
+            }
+          },
+          "404": { "description": "Notification not found" }
+        },
+        "tags": ["notifications"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/notifications/test": {
+      "get": {
+        "operationId": "NotificationsController_test",
+        "summary": "Test endpoint",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Test successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": { "message": "Notifications module is working" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["notifications"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/chat": {
+      "post": {
+        "operationId": "ChatController_createChat",
+        "summary": "Create a new chat",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateChatDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Chat created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "productId": "123e4567-e89b-12d3-a456-426614174001",
+                    "buyerId": "123e4567-e89b-12d3-a456-426614174002",
+                    "sellerId": "123e4567-e89b-12d3-a456-426614174003",
+                    "isBlocked": false
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid request" }
+        },
+        "tags": ["chat"],
+        "security": [{ "bearer": [] }]
+      },
+      "get": {
+        "operationId": "ChatController_getUserChats",
+        "summary": "Get all user chats",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Chats retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": [
+                    {
+                      "id": "123e4567-e89b-12d3-a456-426614174000",
+                      "productId": "123e4567-e89b-12d3-a456-426614174001",
+                      "messages": []
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": ["chat"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/chat/{id}": {
+      "get": {
+        "operationId": "ChatController_getChatById",
+        "summary": "Get chat by ID with messages",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Chat ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chat retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "productId": "123e4567-e89b-12d3-a456-426614174001",
+                    "messages": [
+                      {
+                        "id": "123e4567-e89b-12d3-a456-426614174004",
+                        "content": "Hello, is this available?",
+                        "senderId": "123e4567-e89b-12d3-a456-426614174002"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "403": { "description": "Forbidden" },
+          "404": { "description": "Chat not found" }
+        },
+        "tags": ["chat"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/chat/{id}/block": {
+      "put": {
+        "operationId": "ChatController_blockChat",
+        "summary": "Block a chat",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Chat ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chat blocked successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "isBlocked": true
+                  }
+                }
+              }
+            }
+          },
+          "403": { "description": "Forbidden" }
+        },
+        "tags": ["chat"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/chat/{id}/unblock": {
+      "put": {
+        "operationId": "ChatController_unblockChat",
+        "summary": "Unblock a chat",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Chat ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chat unblocked successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "isBlocked": false
+                  }
+                }
+              }
+            }
+          },
+          "403": { "description": "Forbidden" }
+        },
+        "tags": ["chat"],
+        "security": [{ "bearer": [] }]
+      }
+    },
+    "/api/v1/chat/test": {
+      "get": {
+        "operationId": "ChatController_test",
+        "summary": "Test endpoint",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Test successful",
+            "content": {
+              "application/json": {
+                "schema": { "example": { "message": "Chat module is working" } }
+              }
+            }
+          }
+        },
+        "tags": ["chat"],
+        "security": [{ "bearer": [] }]
+      }
+    }
+  },
+  "info": {
+    "title": "memi.az API",
+    "description": "Recommerce Platform Backend API",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": { "scheme": "bearer", "bearerFormat": "JWT", "type": "http" }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "User email address"
+          },
+          "password": {
+            "type": "string",
+            "example": "SecurePassword123!",
+            "description": "User password (minimum 8 characters)",
+            "minLength": 8
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe",
+            "description": "User full name",
+            "minLength": 2
+          },
+          "city": {
+            "type": "string",
+            "example": "Baku",
+            "description": "User city"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+994501234567",
+            "description": "User phone number"
+          }
+        },
+        "required": ["email", "password", "name"]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com",
+            "description": "User email address"
+          },
+          "password": {
+            "type": "string",
+            "example": "SecurePassword123!",
+            "description": "User password"
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "RefreshTokenDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "description": "Refresh token"
+          }
+        },
+        "required": ["refreshToken"]
+      },
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "John Doe",
+            "description": "User full name",
+            "minLength": 2
+          },
+          "city": {
+            "type": "string",
+            "example": "Baku",
+            "description": "User city"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+994501234567",
+            "description": "User phone number"
+          },
+          "avatar": {
+            "type": "string",
+            "example": "https://example.com/avatar.jpg",
+            "description": "User avatar URL"
+          }
+        }
+      },
+      "CreateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Clothing",
+            "description": "Category name",
+            "minLength": 2
+          },
+          "slug": {
+            "type": "string",
+            "example": "clothing",
+            "description": "Category slug (URL-friendly)",
+            "minLength": 2
+          },
+          "description": {
+            "type": "string",
+            "example": "All types of clothing items",
+            "description": "Category description"
+          }
+        },
+        "required": ["name", "slug"]
+      },
+      "UpdateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Clothing",
+            "description": "Category name",
+            "minLength": 2
+          },
+          "slug": {
+            "type": "string",
+            "example": "clothing",
+            "description": "Category slug (URL-friendly)",
+            "minLength": 2
+          },
+          "description": {
+            "type": "string",
+            "example": "All types of clothing items",
+            "description": "Category description"
+          }
+        }
+      },
+      "CreateSubcategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Jackets",
+            "description": "Subcategory name",
+            "minLength": 2
+          },
+          "slug": {
+            "type": "string",
+            "example": "jackets",
+            "description": "Subcategory slug (URL-friendly)",
+            "minLength": 2
+          },
+          "categoryId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "description": "Parent category ID"
+          }
+        },
+        "required": ["name", "slug", "categoryId"]
+      },
+      "CreateProductDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Vintage Leather Jacket",
+            "description": "Product title",
+            "minLength": 3
+          },
+          "description": {
+            "type": "string",
+            "example": "Beautiful vintage leather jacket in excellent condition. Size M.",
+            "description": "Product description",
+            "minLength": 10
+          },
+          "price": {
+            "type": "number",
+            "example": 150.5,
+            "description": "Product price in AZN",
+            "minimum": 0
+          },
+          "condition": {
+            "type": "string",
+            "example": "EXCELLENT",
+            "enum": ["NEW", "LIKE_NEW", "EXCELLENT", "GOOD", "FAIR", "POOR"],
+            "description": "Product condition"
+          },
+          "categoryId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "description": "Category ID"
+          },
+          "subcategoryId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174001",
+            "description": "Subcategory ID"
+          },
+          "size": {
+            "type": "string",
+            "example": "M",
+            "description": "Product size"
+          },
+          "color": {
+            "type": "string",
+            "example": "Brown",
+            "description": "Product color"
+          },
+          "brand": {
+            "type": "string",
+            "example": "Zara",
+            "description": "Product brand"
+          },
+          "material": {
+            "type": "string",
+            "example": "Leather",
+            "description": "Product material"
+          },
+          "location": {
+            "type": "string",
+            "example": "Baku",
+            "description": "Product location"
+          },
+          "imageUrls": {
+            "example": [
+              "https://example.com/image1.jpg",
+              "https://example.com/image2.jpg"
+            ],
+            "description": "Product image URLs (maximum 8 images)",
+            "maxItems": 8,
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "price",
+          "condition",
+          "categoryId",
+          "imageUrls"
+        ]
+      },
+      "UpdateProductDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Vintage Leather Jacket",
+            "description": "Product title",
+            "minLength": 3
+          },
+          "description": {
+            "type": "string",
+            "example": "Beautiful vintage leather jacket in excellent condition.",
+            "description": "Product description",
+            "minLength": 10
+          },
+          "price": {
+            "type": "number",
+            "example": 150.5,
+            "description": "Product price in AZN",
+            "minimum": 0
+          },
+          "condition": {
+            "type": "string",
+            "example": "EXCELLENT",
+            "enum": ["NEW", "LIKE_NEW", "EXCELLENT", "GOOD", "FAIR", "POOR"],
+            "description": "Product condition"
+          },
+          "categoryId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "description": "Category ID"
+          },
+          "subcategoryId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174001",
+            "description": "Subcategory ID"
+          },
+          "size": {
+            "type": "string",
+            "example": "M",
+            "description": "Product size"
+          },
+          "color": {
+            "type": "string",
+            "example": "Brown",
+            "description": "Product color"
+          },
+          "brand": {
+            "type": "string",
+            "example": "Zara",
+            "description": "Product brand"
+          },
+          "material": {
+            "type": "string",
+            "example": "Leather",
+            "description": "Product material"
+          },
+          "location": {
+            "type": "string",
+            "example": "Baku",
+            "description": "Product location"
+          },
+          "status": {
+            "type": "string",
+            "example": "ACTIVE",
+            "enum": ["ACTIVE", "RESERVED", "SOLD", "DELETED"],
+            "description": "Product status"
+          },
+          "imageUrls": {
+            "example": ["https://example.com/image1.jpg"],
+            "description": "Product image URLs (maximum 8 images)",
+            "maxItems": 8,
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "AddFavoriteDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "description": "Product ID to add to favorites"
+          }
+        },
+        "required": ["productId"]
+      },
+      "CreateReservationDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "description": "Product ID to reserve"
+          }
+        },
+        "required": ["productId"]
+      },
+      "UpdateReservationDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ACCEPTED",
+            "enum": ["REQUESTED", "ACCEPTED", "REJECTED", "CANCELLED"],
+            "description": "New reservation status"
+          }
+        },
+        "required": ["status"]
+      },
+      "CreateReportDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "PRODUCT",
+            "enum": ["PRODUCT", "USER", "CHAT"],
+            "description": "Type of report"
+          },
+          "productId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "description": "Product ID (required for product reports)"
+          },
+          "userId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174001",
+            "description": "User ID (required for user reports)"
+          },
+          "chatId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174002",
+            "description": "Chat ID (required for chat reports)"
+          },
+          "reason": {
+            "type": "string",
+            "example": "This product contains inappropriate content",
+            "description": "Reason for the report",
+            "minLength": 10
+          }
+        },
+        "required": ["type", "reason"]
+      },
+      "CreateChatDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "description": "Product ID to start a chat about"
+          }
+        },
+        "required": ["productId"]
+      }
+    }
+  }
+}
