@@ -280,6 +280,7 @@ Use:
 • Use hooks for logic
 • No business logic in UI
 • No hardcoded strings
+• Prioritize SSR and server-side fetching
 • i18n-ready (future)
 
 ⸻

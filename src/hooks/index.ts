@@ -2,12 +2,12 @@
  * Hooks Exports
  *
  * Central export for all custom hooks
+ *
+ * Note: Most data fetching is done server-side for SEO.
+ * Client-side hooks can be added here when needed for real-time updates or mutations.
+ *
+ * For API access, use:
+ * - Server-side: `src/lib/server/*` functions
+ * - Client-side: `src/services/api/*` services directly
+ * - Mutations: `src/app/actions/*` server actions
  */
-
-export * from "./use-api";
-export * from "./use-products";
-export * from "./use-categories";
-export * from "./use-favorites";
-export * from "./use-auth";
-export * from "./use-user";
-export * from "./use-chat";
