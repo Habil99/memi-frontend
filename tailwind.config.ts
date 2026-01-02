@@ -24,12 +24,34 @@ const config: Config = {
       },
     },
     colors: {
-      // Design system tokens
-      brand: theme.colors.brand,
-      background: theme.colors.background,
-      text: theme.colors.text,
-      border: theme.colors.border,
-      state: theme.colors.state,
+      // Design system tokens - flattened for Tailwind classes
+      brand: {
+        primary: theme.colors.brand.primary,
+        secondary: theme.colors.brand.secondary,
+        accent: theme.colors.brand.accent,
+      },
+      background: {
+        page: theme.colors.background.page,
+        surface: theme.colors.background.surface,
+        elevated: theme.colors.background.elevated,
+      },
+      text: {
+        primary: theme.colors.text.primary,
+        secondary: theme.colors.text.secondary,
+        muted: theme.colors.text.muted,
+        inverse: theme.colors.text.inverse,
+      },
+      border: {
+        default: theme.colors.border.default,
+        focus: theme.colors.border.focus,
+        subtle: theme.colors.border.subtle,
+      },
+      state: {
+        success: theme.colors.state.success,
+        warning: theme.colors.state.warning,
+        error: theme.colors.state.error,
+        info: theme.colors.state.info,
+      },
       // Legacy Nextmerce colors (for backward compatibility)
       current: "currentColor",
       transparent: "transparent",
